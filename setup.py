@@ -67,7 +67,8 @@ with open('README.rst', 'r') as f:
 install_requires = check_dependencies()
 install_requires.extend(["setuptools",
                          "decorator",
-                         "fcsparser>=0.1.1"])
+                         "fcsparser>=0.1.1",
+                         "tornado<5"])
 
 setup(
     name='FlowCytometryTools',

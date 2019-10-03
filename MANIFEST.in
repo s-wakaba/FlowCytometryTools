@@ -1,2 +1,4 @@
 include *.txt
 global-include *.fcs
+include FlowCytometryTools/gui/webagg_backend/app_template.html
+include FlowCytometryTools/gui/wx_backend/wx-glade-wireframe-template.wxg
