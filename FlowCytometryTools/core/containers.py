@@ -181,7 +181,7 @@ class FCMeasurement(Measurement):
         kwargs.setdefault('hspace', 0.1)
         return plot_ndpanel(channel_mat, plot_region, **kwargs)
 
-    def view_interactively(self, backend='wx'):
+    def view_interactively(self, backend='wx', **kwargs):
         '''Loads the current sample in a graphical interface for drawing gates.
 
         Parameters
@@ -190,8 +190,8 @@ class FCMeasurement(Measurement):
             Specifies which backend should be used to view the sample.
         '''
         if backend == 'auto':
-            if matplotlib.__version__ >= '1.4.3':
-                backend = 'WebAgg'
+            if tuple(map(int, matplotlib.__version__.split('.')[:3])) >= (1, 4, 3):
+                backend = 'webagg'
             else:
                 backend = 'wx'
 
@@ -202,7 +202,7 @@ class FCMeasurement(Measurement):
         else:
             raise ValueError('No support for backend {}'.format(backend))
 
-        gui.GUILauncher(measurement=self)
+        gui.GUILauncher(measurement=self, **kwargs)
 
     @queueable
     @doc_replacer

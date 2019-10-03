@@ -204,7 +204,7 @@ class MyApplication(tornado.web.Application):
 class GUILauncher(object):
     """ Use this to launch the wx-based fdlow cytometry app """
 
-    def __init__(self, filepath=None, measurement=None):
+    def __init__(self, filepath=None, measurement=None, port=8080, open_browser=True):
         if filepath is not None and measurement is not None:
             raise ValueError('You can only specify either filepath or measurement, but not both.')
 
@@ -212,8 +212,12 @@ class GUILauncher(object):
         # The question is what to do if launched from within ipython notebook, which is
         # already running a tornado server.
         self.ioloop_initiator = not tornado.ioloop.IOLoop.initialized()
+        # FIXME: IOLoop.initialized() method was removed after tornado 5.x.x
 
         self.app = MyApplication(stop_callback=self.stop)
+
+        self.port = port
+        self.open_browser = open_browser
 
         if filepath is not None:
             self.app.load_fcs(filepath)
@@ -222,7 +226,6 @@ class GUILauncher(object):
 
         self.http_server = tornado.httpserver.HTTPServer(self.app)
 
-        port = 8080
         try:
             self.http_server.listen(port)
         except:
@@ -233,10 +236,14 @@ class GUILauncher(object):
         self.run()
 
     def run(self):
-        url = r'http://127.0.0.1:8080/'
-        print('The application should have opened a new tab '
-              'in the webbrowser at address: {}'.format(url))
-        webbrowser.open_new_tab(url)
+        url = r'http://127.0.0.1:{0}/'.format(self.port)
+        if self.open_browser:
+            print('The application should have opened a new tab '
+                  'in the webbrowser at address: {}'.format(url))
+            webbrowser.open_new_tab(url)
+        else:
+            print('The application can be opened '
+                  'at address: {}'.format(url))
 
         if self.ioloop_initiator:
             tornado.ioloop.IOLoop.current().start()
